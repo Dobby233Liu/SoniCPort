@@ -513,7 +513,7 @@ ExternalProject_Add(bin2h
 	SOURCE_DIR "${CMAKE_SOURCE_DIR}/bin2h"
 	DOWNLOAD_COMMAND ""
 	UPDATE_COMMAND ""
-	BUILD_BYPRODUCTS "<INSTALL_DIR>/bin/bin2h"
+	BUILD_BYPRODUCTS "<INSTALL_DIR>/bin/bin2h${CMAKE_EXECUTABLE_SUFFIX}"
 	CMAKE_ARGS
 		-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 		-DCMAKE_BUILD_TYPE=Release
@@ -525,7 +525,7 @@ ExternalProject_Get_Property(bin2h INSTALL_DIR)
 
 add_executable(bin2h_tool IMPORTED)
 add_dependencies(bin2h_tool bin2h)
-set_target_properties(bin2h_tool PROPERTIES IMPORTED_LOCATION "${INSTALL_DIR}/bin/bin2h")
+set_target_properties(bin2h_tool PROPERTIES IMPORTED_LOCATION "${INSTALL_DIR}/bin/bin2h{CMAKE_EXECUTABLE_SUFFIX}")
 
 # Convert resources to header files
 foreach(FILENAME IN LISTS RESOURCES)
