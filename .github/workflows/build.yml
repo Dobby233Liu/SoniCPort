@@ -14,8 +14,8 @@ jobs:
 
     - uses: lukka/get-cmake@latest
 
-    - name: Install vcpkg intergration
-      run: vcpkg intergrate install
+    - name: Install vcpkg integration
+      run: vcpkg integrate install
     
     - name: Install SDL2
       run: vcpkg install sdl2:x86-windows sdl2:x64-windows
