@@ -525,7 +525,7 @@ ExternalProject_Get_Property(bin2h INSTALL_DIR)
 
 add_executable(bin2h_tool IMPORTED)
 add_dependencies(bin2h_tool bin2h)
-set_target_properties(bin2h_tool PROPERTIES IMPORTED_LOCATION "${INSTALL_DIR}/bin/bin2h{CMAKE_EXECUTABLE_SUFFIX}")
+set_target_properties(bin2h_tool PROPERTIES IMPORTED_LOCATION "${INSTALL_DIR}/bin/bin2h${CMAKE_EXECUTABLE_SUFFIX}")
 
 # Convert resources to header files
 foreach(FILENAME IN LISTS RESOURCES)
