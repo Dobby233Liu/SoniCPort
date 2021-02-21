@@ -14,6 +14,9 @@ jobs:
 
     - uses: lukka/get-cmake@latest
 
+    - name: Install vcpkg intergration
+      run: vcpkg intergrate install
+    
     - name: Install SDL2
       run: vcpkg install sdl2:x86-windows sdl2:x64-windows
 
@@ -26,17 +29,17 @@ jobs:
       working-directory: build
       run: |
         pushd Win32
-        cmake ../.. -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        cmake ../.. -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
         popd
         pushd x64
-        cmake ../.. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        cmake ../.. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
         popd
 
     - name: Build
       working-directory: build
       run: |
-        cmake --build Win32 --config %BUILD_TYPE%
-        cmake --build x64 --config %BUILD_TYPE%
+        cmake --build Win32 --config $env:BUILD_TYPE
+        cmake --build x64 --config $env:BUILD_TYPE
     
     - name: Check dirs (temporary)
       run: |
