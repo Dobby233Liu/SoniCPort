@@ -17,17 +17,29 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build project files
-      run: cmake -E make_directory ${{github.workspace}}/build
+      run: |
+        mkdir ${{github.workspace}}/build
+        cmake -E make_directory ${{github.workspace}}/build/Win32
+        cmake -E make_directory ${{github.workspace}}/build/x64
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake ${{github.workspace}} -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+      run: |
+        pushd Win32
+        cmake ${{github.workspace}} -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        popd
+        pushd x64
+        cmake ${{github.workspace}} -G "Visual Studio 16 2019 Win64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        popd
 
     - name: Build
       working-directory: ${{github.workspace}}/build
-      run: cmake --build . --config $BUILD_TYPE
+      run: |
+        cmake --build Win32 --config %BUILD_TYPE%
+        cmake --build x64 --config %BUILD_TYPE%
     
     - name: Check dirs (temporary)
       run: |
-        dir
-        dir /S ${{github.workspace}}/build
+        dir ${{github.workplace}}
+        dir /S ${{github.workspace}}/build/Win32
+        dir /S ${{github.workspace}}/build/x64
