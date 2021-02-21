@@ -12,6 +12,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - uses: lukka/get-cmake@latest
+
+    - name: Restore from cache and install vcpkg
+      uses: lukka/run-vcpkg@v6
+      with:
+        setupOnly: true
+
     - name: Install SDL2
       run: vcpkg install sdl2-x86-windows sdl2:x64-windows
 
@@ -24,10 +31,10 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: |
         pushd Win32
-        cmake ${{github.workspace}} -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        cmake ${{github.workspace}} -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
         popd
         pushd x64
-        cmake ${{github.workspace}} -G "Visual Studio 16 2019 Win64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+        cmake ${{github.workspace}} -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
         popd
 
     - name: Build
