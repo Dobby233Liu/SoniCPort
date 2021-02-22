@@ -37,13 +37,13 @@ jobs:
     - name: Build
       working-directory: build
       run: |
-        cmake --build . --config $env:BUILD_TYPE
-    
-    - name: Check dirs (temporary)
-      run: |
-        dir
-        dir bin
-        tree build
+        cmake --build . --config $env:BUILD_TYPE -DMSVC_LINK_STATIC_RUNTIME=ON -DPKG_CONFIG_STATIC_LIBS=ON
+
+    - name: Upload bin/SoniCPort
+      uses: actions/upload-artifact@v2
+      with:
+        path: bin
+        name: SoniCPort-msvc-x64
 
   build_mingw_x64:
     runs-on: windows-latest
@@ -73,7 +73,7 @@ jobs:
     - name: Build
       working-directory: build
       run: |
-        cmake --build . --config $env:BUILD_TYPE
+        cmake --build . --config $env:BUILD_TYPE -DPKG_CONFIG_STATIC_LIBS=ON
     
     - name: Upload bin/SoniCPort
       uses: actions/upload-artifact@v2
@@ -109,8 +109,9 @@ jobs:
     - name: Build
       working-directory: build
       run: |
-        cmake --build . --config $BUILD_TYPE
+        cmake --build . --config $BUILD_TYPE -DPKG_CONFIG_STATIC_LIBS=ON
     
+    # i shouldn't upload it but people need to check
     - name: Upload bin/SoniCPort
       uses: actions/upload-artifact@v2
       with:
