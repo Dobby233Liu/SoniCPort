@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: Release
   # Which SDL2 version to build for Windows
   SDL2_VERSION: 2.0.14
-  # SDL2_BUILD_TYPE: Release
+  SDL2_BUILD_TYPE: Release
 
 jobs:
   build_msvc_x64:
@@ -22,9 +22,9 @@ jobs:
         git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
         cd ..\SDL
         mkdir build && cd build
-        cmake .. -G "Visual Studio 16 2019"
-        cmake --build . -DCMAKE_BUILD_TYPE=Release
-        cmake --install . -DCMAKE_BUILD_TYPE=Release
+        cmake .. -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=$env:SDL2_BUILD_TYPE
+        cmake --build . --config $env:SDL2_BUILD_TYPE
+        cmake --install . --config env:SDL2_BUILD_TYPE
 
     - run: |
         mkdir build
@@ -62,9 +62,9 @@ jobs:
         git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
         cd ..\SDL
         mkdir build && cd build
-        cmake .. -G "MinGW Makefiles"
-        cmake --build . -DCMAKE_BUILD_TYPE=Release
-        cmake --install . -DCMAKE_BUILD_TYPE=Release
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=$env:SDL2_BUILD_TYPE
+        cmake --build . --config $env:SDL2_BUILD_TYPE
+        cmake --install . --config env:SDL2_BUILD_TYPE
 
     - name: Configure CMake
       working-directory: build
