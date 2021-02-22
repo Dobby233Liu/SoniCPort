@@ -4,9 +4,11 @@ on: [push]
 
 env:
   BUILD_TYPE: Release
+  # Which SDL2 version to build for Windows
+  SDL2_VERSION: 2.0.14
 
 jobs:
-  build_msvc:
+  build_msvc_x64:
     runs-on: windows-latest
 
     steps:
@@ -14,38 +16,34 @@ jobs:
 
     - uses: lukka/get-cmake@latest
 
-    - name: Install vcpkg integration
-      run: vcpkg integrate install
-    
     - name: Install SDL2
-      run: vcpkg install sdl2:x86-windows sdl2:x64-windows
+      run: |
+        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
+        cd ..\SDL
+        mkdir build && cd build
+        cmake .. -G "Visual Studio 16 2019"
+        cmake --build .
+        cmake --install .
 
     - run: |
         mkdir build
-        cmake -E make_directory build/Win32
-        cmake -E make_directory build/x64
+        cmake -E make_directory build
 
     - name: Configure CMake
       working-directory: build
       run: |
-        pushd Win32
-        cmake ../.. -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
-        popd
-        pushd x64
-        cmake ../.. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
-        popd
+        cmake ../.. -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
 
     - name: Build
       working-directory: build
       run: |
-        cmake --build Win32 --config $env:BUILD_TYPE
-        cmake --build x64 --config $env:BUILD_TYPE
+        cmake --build . --config $env:BUILD_TYPE
     
     - name: Check dirs (temporary)
       run: |
         dir
-        tree build/Win32
-        tree build/x64
+        dir bin
+        tree build
 
   build_mingw_x64:
     runs-on: windows-latest
@@ -60,7 +58,7 @@ jobs:
     
     - name: Install SDL2
       run: |
-        git clone --depth 1 --branch release-2.0.14 https://github.com/SDL-mirror/SDL ..\SDL
+        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
         cd ..\SDL
         mkdir build && cd build
         cmake .. -G "MinGW Makefiles"
@@ -77,10 +75,11 @@ jobs:
       run: |
         cmake --build . --config $env:BUILD_TYPE
     
-    - name: Check dirs (temporary)
-      run: |
-        dir
-        tree build
+    - name: Upload bin/SoniCPort
+      uses: actions/upload-artifact@v2
+      with:
+        path: bin
+        name: SoniCPort-mingw-x64
 
   build_linux:
     runs-on: ubuntu-latest
@@ -102,15 +101,15 @@ jobs:
     - name: Configure CMake
       working-directory: build
       run: |
-        cmake .. -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
+        cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: build
       run: |
-        cmake --build . --config $env:BUILD_TYPE
+        cmake --build . --config $BUILD_TYPE
     
     - name: Upload bin/SoniCPort
       uses: actions/upload-artifact@v2
       with:
-        path: bin/SoniCPort
-        name: SoniCPort-linux
+        path: bin
+        name: SoniCPort-linux-x86_64
