@@ -55,19 +55,22 @@ jobs:
 
     - uses: lukka/get-cmake@latest
 
-    - name: Install vcpkg integration
-      run: vcpkg integrate install
-    
-    - name: Install SDL2
-      run: vcpkg install sdl2
-
     - run: |
         cmake -E make_directory build
+    
+    - name: Install SDL2
+      run: |
+        git clone --depth 1 --branch release-20.1.4 https://github.com/SDL-mirror/SDL ..\SDL
+        cd ..\SDL
+        mkdir build && cd build
+        cmake .. -G "MinGW Makefiles"
+        make
+        make install
 
     - name: Configure CMake
       working-directory: build
       run: |
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
 
     - name: Build
       working-directory: build
@@ -106,7 +109,8 @@ jobs:
       run: |
         cmake --build . --config $env:BUILD_TYPE
     
-    - name: Check dirs (temporary)
-      run: |
-        ls
-        ls build
+    - name: Upload bin/SoniCPort
+      uses: actions/upload-artifact@v2
+      with:
+        path: bin/SoniCPort
+        name: SoniCPort-linux
