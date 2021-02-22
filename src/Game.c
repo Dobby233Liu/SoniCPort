@@ -14,6 +14,9 @@
 #ifdef SCP_SPLASH
 	#include "GM_SSRG.h"
 #endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 //Game
 uint8_t gamemode; //MSB acts as a title card flag
@@ -48,6 +51,32 @@ void ReadJoypads()
 	jpad2_hold = state;
 }
 
+// XREF: loop in EntryPoint
+void _GameModeLoop()
+{
+	switch (gamemode & 0x7F)
+	{
+		case GameMode_Sega:
+			GM_Sega();
+			break;
+		case GameMode_Title:
+			GM_Title();
+			break;
+		case GameMode_Level:
+		case GameMode_Demo:
+			GM_Level();
+			break;
+	#ifdef SCP_SPLASH
+		case GameMode_SSRG:
+			GM_SSRG();
+			break;
+	#endif
+		default:
+			VDPSetupGame();
+			gamemode = GameMode_Sega;
+			break;
+	}
+}
 //Game entry point
 void EntryPoint()
 {
@@ -57,32 +86,15 @@ void EntryPoint()
 	//Initialize game state
 	gamemode = GameMode_Sega;
 	
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(_GameModeLoop, 0, 1);
+#else
 	//Run game loop
 	while (1)
 	{
-		switch (gamemode & 0x7F)
-		{
-			case GameMode_Sega:
-				GM_Sega();
-				break;
-			case GameMode_Title:
-				GM_Title();
-				break;
-			case GameMode_Level:
-			case GameMode_Demo:
-				GM_Level();
-				break;
-		#ifdef SCP_SPLASH
-			case GameMode_SSRG:
-				GM_SSRG();
-				break;
-		#endif
-			default:
-				VDPSetupGame();
-				gamemode = GameMode_Sega;
-				break;
-		}
+		_GameModeLoop();
 	}
+#endif
 }
 
 //Interrupts
