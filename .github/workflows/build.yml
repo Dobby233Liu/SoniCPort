@@ -44,5 +44,37 @@ jobs:
     - name: Check dirs (temporary)
       run: |
         dir
-        dir /S build/Win32
-        dir /S build/x64
+        tree build/Win32
+        tree build/x64
+
+  build_mingw_x64:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: lukka/get-cmake@latest
+
+    - name: Install vcpkg integration
+      run: vcpkg integrate install
+    
+    - name: Install SDL2
+      run: vcpkg install sdl2
+
+    - run: |
+        cmake -E make_directory build
+
+    - name: Configure CMake
+      working-directory: build
+      run: |
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+    - name: Build
+      working-directory: build
+      run: |
+        cmake --build . --config $env:BUILD_TYPE
+    
+    - name: Check dirs (temporary)
+      run: |
+        dir
+        tree build
