@@ -60,7 +60,7 @@ jobs:
     
     - name: Install SDL2
       run: |
-        git clone --depth 1 --branch release-20.1.4 https://github.com/SDL-mirror/SDL ..\SDL
+        git clone --depth 1 --branch release-2.0.14 https://github.com/SDL-mirror/SDL ..\SDL
         cd ..\SDL
         mkdir build && cd build
         cmake .. -G "MinGW Makefiles"
