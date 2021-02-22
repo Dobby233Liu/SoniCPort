@@ -464,7 +464,9 @@ void RunPLC()
 		
 		plc_buffer_regs.source += 2;
 		plc_buffer_regs.xor_mode = header & 0x8000;
+		#ifndef SCP_FIX_BUGS
 		plc_buffer_reg18 = header & 0x7FFF;
+		#endif
 		
 		NemDecPrepare(&plc_buffer_regs);
 		
@@ -475,6 +477,10 @@ void RunPLC()
 		plc_buffer_regs.d1 = 0;
 		plc_buffer_regs.d2 = 0;
 		plc_buffer_regs.d6 = 0x10;
+		#ifdef SCP_FIX_BUGS
+		// http://info.sonicretro.org/SCHG_How-to:Fix_a_race_condition_with_Pattern_Load_Cues
+		plc_buffer_reg18 = header & 0x7FFF;
+		#endif
 	}
 }
 
