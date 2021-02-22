@@ -64,8 +64,8 @@ jobs:
         cd ..\SDL
         mkdir build && cd build
         cmake .. -G "MinGW Makefiles"
-        make
-        make install
+        cmake --build .
+        cmake --install .
 
     - name: Configure CMake
       working-directory: build
