@@ -105,7 +105,7 @@ jobs:
     # TODO: version subject to change
     - name: Install x86 MinGW
       if: matrix.pinning == 'x86' && steps.cache-sdl2.outputs.cache-hit != 'true'
-      run: cinst mingw --version=8.1.0 --x86 -y --force
+      run: cinst mingw --version=8.1.0 --x86 -y --force && refreshenv
   
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
