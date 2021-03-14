@@ -83,7 +83,7 @@ jobs:
         cmake --build .
       
     - name: Install SDL2
-      run: cmake --install SDL\build --config Debug
+      run: cmake --install SDL\build
       
     - name: Configure CMake
       working-directory: build
