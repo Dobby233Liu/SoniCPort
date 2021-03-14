@@ -16,14 +16,24 @@ jobs:
 
     - uses: lukka/get-cmake@latest
 
-    - name: Install SDL2
+    - name: Cache SDL2 build
+      id: cache-sdl2
+      uses: actions/cache@v2
+      with:
+        path: SDL
+        key: win-msvc-sdl2-${{ env.SDL2_VERSION }}
+
+    - name: Build SDL2
+      if: steps.cache-sdl2.outputs.cache-hit != 'true'
       run: |
-        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
-        cd ..\SDL
+        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL.git SDL
+        cd SDL
         mkdir build && cd build
         cmake .. -G "Visual Studio 16 2019"
         cmake --build .
-        cmake --install . --config Debug
+      
+    - name: Install SDL2
+      run: cmake --install SDL\build --config Debug
 
     - run: |
         mkdir build
@@ -55,16 +65,26 @@ jobs:
 
     - run: |
         cmake -E make_directory build
-    
-    - name: Install SDL2
+
+    - name: Cache SDL2 build
+      id: cache-sdl2
+      uses: actions/cache@v2
+      with:
+        path: SDL
+        key: win-mingw-sdl2-${{ env.SDL2_VERSION }}
+
+    - name: Build SDL2
+      if: steps.cache-sdl2.outputs.cache-hit != 'true'
       run: |
-        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL ..\SDL
-        cd ..\SDL
+        git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL.git SDL
+        cd SDL
         mkdir build && cd build
         cmake .. -G "MinGW Makefiles"
         cmake --build .
-        cmake --install .
-
+      
+    - name: Install SDL2
+      run: cmake --install SDL\build --config Debug
+      
     - name: Configure CMake
       working-directory: build
       run: |
