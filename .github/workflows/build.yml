@@ -105,7 +105,12 @@ jobs:
     # TODO: version subject to change
     - name: Install x86 MinGW
       if: matrix.pinning == 'x86' && steps.cache-sdl2.outputs.cache-hit != 'true'
-      run: choco upgrade mingw --version=8.1.0 --x86 -y --force --force-dependencies && refreshenv
+      run: |
+        choco uninstall mingw
+        choco install mingw --version=8.1.0 --x86 -y
+        refreshenv
+        $path = where.exe mingw32-make.exe | Get-Item
+        Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
   
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
