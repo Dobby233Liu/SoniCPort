@@ -75,11 +75,11 @@ jobs:
           - pinning: "x86"
             CFLAGS: "-m32"
             #CXXFLAGS: "-m32"
-            CMAKE_EXE_LINKER_FLAGS: "${{env.CMAKE_EXE_LINKER_FLAGS}} -m32"
+            CMAKE_EXE_LINKER_FLAGS: "${{ env.CMAKE_EXE_LINKER_FLAGS }} -m32"
           - pinning: "x64"
             CFLAGS: "-m64"
             #CXXFLAGS: "-m64"
-            CMAKE_EXE_LINKER_FLAGS: "${{env.CMAKE_EXE_LINKER_FLAGS}} -m64"
+            CMAKE_EXE_LINKER_FLAGS: "${{ env.CMAKE_EXE_LINKER_FLAGS }} -m64"
     
     env:
       CMAKE_C_FLAGS: ${{ matrix.CFLAGS }}
