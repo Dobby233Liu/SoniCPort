@@ -104,7 +104,7 @@ jobs:
     - name: Configure CMake
       working-directory: build
       run: |
-        cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPKG_CONFIG_STATIC_LIBS=ON
+        cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: build
@@ -116,4 +116,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: bin
-        name: SoniCPort-linux-x86_64
+        name: SoniCPort-linux-x86_64-shared
