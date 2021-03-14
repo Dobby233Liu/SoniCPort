@@ -8,8 +8,14 @@ env:
   SDL2_VERSION: 2.0.14
 
 jobs:
-  build_msvc_x64:
+
+  build_msvc:
+
     runs-on: windows-latest
+  
+    strategy:
+      matrix:
+        arch: [Win32, x64]
 
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +27,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: SDL
-        key: win-msvc-sdl2-${{ env.SDL2_VERSION }}
+        key: win-msvc-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.arch }}
 
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
@@ -29,7 +35,7 @@ jobs:
         git clone --depth 1 --branch release-$env:SDL2_VERSION https://github.com/SDL-mirror/SDL.git SDL
         cd SDL
         mkdir build && cd build
-        cmake .. -G "Visual Studio 16 2019"
+        cmake .. -G "Visual Studio 16 2019" -A ${{ matrix.arch }}
         cmake --build .
       
     - name: Install SDL2
@@ -42,7 +48,7 @@ jobs:
     - name: Configure CMake
       working-directory: build
       run: |
-        cmake .. -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DMSVC_LINK_STATIC_RUNTIME=ON -DPKG_CONFIG_STATIC_LIBS=ON
+        cmake .. -G "Visual Studio 16 2019" -A ${{ matrix.arch }} -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE -DMSVC_LINK_STATIC_RUNTIME=ON -DPKG_CONFIG_STATIC_LIBS=ON
 
     - name: Build
       working-directory: build
@@ -53,9 +59,10 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: bin
-        name: SoniCPort-msvc-x64
+        name: SoniCPort-msvc-${{ matrix.arch }}
 
-  build_mingw_x64:
+  build_mingw:
+
     runs-on: windows-latest
 
     steps:
