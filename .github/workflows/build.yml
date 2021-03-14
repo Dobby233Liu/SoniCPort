@@ -85,7 +85,7 @@ jobs:
       CMAKE_EXE_LINKER_FLAGS: ${{ matrix.CFLAGS }}
       CMAKE_SHARED_LIBRARY_C_FLAGS: ${{ matrix.CFLAGS }}
       CMAKE_SHARED_LIBRARY_CXX_FLAGS: ${{ matrix.CFLAGS }}
-
+      
     steps:
     - uses: actions/checkout@v2
 
@@ -94,12 +94,18 @@ jobs:
     - run: |
         cmake -E make_directory build
 
+    #you can't cross compile without this
+    # TODO: version subject to change
+    - name: Install x86 MinGW
+      if: matrix.pinning == 'x86'
+      run: cinst mingw --version=8.1.0 --x86 -y
+    
     - name: Cache SDL2 build
       id: cache-sdl2
       uses: actions/cache@v2
       with:
         path: SDL
-        key: win-mingw-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.pinning }}
+        key: win-mingw-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.pinning }}-gcc32
 
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
@@ -147,7 +153,7 @@ jobs:
       run: |
         sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
         sudo apt-get update -y -qq
-        sudo apt-get install libsdl2-dev=$SDL2_VERSION-1ubuntu1
+        sudo apt-get install libsdl2-dev=$SDL2_VERSION+dfsg2-3
 
     - run: |
         cmake -E make_directory build
