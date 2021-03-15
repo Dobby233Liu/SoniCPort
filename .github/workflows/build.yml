@@ -111,6 +111,8 @@ jobs:
     #    refreshenv
     #    $path = where.exe mingw32-make.exe | Get-Item
     #    Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+    - name: Upgrade MinGW-w64
+      run: choco upgrade mingw -y
   
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
