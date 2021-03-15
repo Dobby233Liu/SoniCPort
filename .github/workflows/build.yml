@@ -93,14 +93,7 @@ jobs:
 
     - run: |
         cmake -E make_directory build
-    
-    - name: Cache SDL2 build
-      id: cache-sdl2
-      uses: actions/cache@v2
-      with:
-        path: SDL
-        key: win-mingw-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.pinning }}-gcc32
-
+  
     #you can't cross compile without this
     # TODO: version subject to change
     #- name: Install x86 MinGW
@@ -112,7 +105,18 @@ jobs:
     #    $path = where.exe mingw32-make.exe | Get-Item
     #    Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
     - name: Upgrade MinGW-w64
-      run: choco upgrade mingw -y
+      run: |
+        choco upgrade mingw -y
+        refreshenv
+        $path = where.exe mingw32-make.exe | Get-Item
+        Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+      
+    - name: Cache SDL2 build
+      id: cache-sdl2
+      uses: actions/cache@v2
+      with:
+        path: SDL
+        key: win-mingw-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.pinning }}-gcc10
   
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
