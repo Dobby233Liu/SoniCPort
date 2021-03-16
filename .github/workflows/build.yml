@@ -93,20 +93,21 @@ jobs:
 
     - run: |
         cmake -E make_directory build
-  
-    #you can't cross compile without this
-    # TODO: version subject to change
-    #- name: Install x86 MinGW
-    #  if: matrix.pinning == 'x86' && steps.cache-sdl2.outputs.cache-hit != 'true'
-    #  run: |
-    #    choco uninstall mingw
-    #    choco install mingw --version=8.1.0 --x86 -y
-    #    refreshenv
-    #    $path = where.exe mingw32-make.exe | Get-Item
-    #    Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+        
     - name: Upgrade MinGW-w64
+      if: matrix.pinning != 'x86'
       run: |
         choco upgrade mingw -y
+        refreshenv
+        $path = where.exe mingw32-make.exe | Get-Item
+        Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+  
+    #you can't cross compile without this
+    - name: Install 32-bit MinGW-w64
+      if: matrix.pinning == 'x86'
+      run: |
+        choco uninstall mingw
+        choco install mingw --x86 -y
         refreshenv
         $path = where.exe mingw32-make.exe | Get-Item
         Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
