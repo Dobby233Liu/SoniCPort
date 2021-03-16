@@ -75,16 +75,16 @@ jobs:
           - pinning: x86
             CFLAGS: -m32
             cc_name: i686
-            CMAKE_MAKE_PROGRAM: make
+            #CMAKE_MAKE_PROGRAM: make
             #CXXFLAGS: -m32
           - pinning: x64
             CFLAGS: -m64
             cc_name: x86_64
-            CMAKE_MAKE_PROGRAM: mingw32-make
+            #CMAKE_MAKE_PROGRAM: mingw32-make
             #CXXFLAGS: -m64
     
     env:
-      CMK_CMDLINE_OPTS: -DCMAKE_MAKE_PROGRAM=${{ matrix.CMAKE_MAKE_PROGRAM }} -DCMAKE_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_CXX_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_EXE_LINKER_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_CXX_FLAGS=${{ matrix.CFLAGS }}
+      CMK_CMDLINE_OPTS: -DCMAKE_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_CXX_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_EXE_LINKER_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_CXX_FLAGS=${{ matrix.CFLAGS }}
       CC: ${{ matrix.cc_name }}-w64-mingw32-gcc
       CXX: ${{ matrix.cc_name }}-w64-mingw32-g++
   
@@ -111,9 +111,8 @@ jobs:
         choco uninstall mingw
         choco install mingw --x86 -y
         refreshenv
-        #$path = where.exe mingw32-make.exe | Get-Item
-        #Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
         choco install make
+        copy C:\ProgramData\chocolatey\bin\make.exe C:\ProgramData\chocolatey\bin\mingw32-make.exe
       
     - name: Cache SDL2 build
       id: cache-sdl2
