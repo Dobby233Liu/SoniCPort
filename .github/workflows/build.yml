@@ -109,8 +109,9 @@ jobs:
         choco uninstall mingw
         choco install mingw --x86 -y
         refreshenv
-        $path = where.exe mingw32-make.exe | Get-Item
-        Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+        #$path = where.exe mingw32-make.exe | Get-Item
+        #Copy-Item -Path $path -Destination (Join-Path $path.Directory 'make.exe')
+        choco install make
       
     - name: Cache SDL2 build
       id: cache-sdl2
