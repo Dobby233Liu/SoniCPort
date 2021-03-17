@@ -1,6 +1,6 @@
 name: Build for PCs
 
-on: [push]
+on: [push, pull_request]
 
 env:
   BUILD_TYPE: Release
@@ -95,7 +95,12 @@ jobs:
 
     - run: |
         cmake -E make_directory build
-        
+  
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.TEMP }}\chocolatey
+          key: win-mingw-chocolatey-10
+    
     - name: Upgrade MinGW-w64
       if: matrix.pinning != 'x86'
       run: |
@@ -120,6 +125,9 @@ jobs:
       with:
         path: SDL
         key: win-mingw-sdl2-${{ env.SDL2_VERSION }}-${{ matrix.pinning }}-gcc10
+        restore-keys: |
+          win-mingw-sdl2---gcc10
+          win-mingw-sdl2-${{ env.SDL2_VERSION }}--gcc10
   
     - name: Build SDL2
       if: steps.cache-sdl2.outputs.cache-hit != 'true'
