@@ -84,9 +84,9 @@ jobs:
             #CXXFLAGS: -m64
     
     env:
-      CMK_CMDLINE_OPTS: -DCMAKE_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_CXX_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_EXE_LINKER_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_CXX_FLAGS=${{ matrix.CFLAGS }}
-      CC: ${{ matrix.cc_name }}-w64-mingw32-gcc
-      CXX: ${{ matrix.cc_name }}-w64-mingw32-g++
+      CMK_CMDLINE_OPTS: -DCMAKE_C_COMPILER=${{ matrix.cc_name }}-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=${{ matrix.cc_name }}-w64-mingw32-g++ -DCMAKE_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_CXX_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_EXE_LINKER_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_C_FLAGS=${{ matrix.CFLAGS }} -DCMAKE_SHARED_LIBRARY_CXX_FLAGS=${{ matrix.CFLAGS }}
+      #CC: ${{ matrix.cc_name }}-w64-mingw32-gcc
+      #CXX: ${{ matrix.cc_name }}-w64-mingw32-g++
   
     steps:
     - uses: actions/checkout@v2
